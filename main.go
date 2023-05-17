@@ -175,10 +175,6 @@ func json2goStruct(name, detail string) {
 func sql2goStruct(name, detail string) {
 	ozlog.Infof("开始连接db...")
 	sql2go()
-	//readJsonAndGen(jsonFile, outType, outFile)
-	//if outType == OutTypeForFile {
-	//	ozlog.Infof("生成文件 %s", outFile)
-	//}
 	ozlog.Infof("生成结构完成...")
 }
 

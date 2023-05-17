@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" // 必须导入,否则出问题
+	ozlog "github.com/usthooz/oozlog/go"
 	"log"
 	"os"
 	"strings"
@@ -156,20 +158,23 @@ func (t *StructTemplate) AssemblyColumns(tbColumns []*TableColumn) []*StructColu
 	return tplColumns
 }
 
-func (t *StructTemplate) Generate(tableName string, tplColumns []*StructColumn) error {
+func (t *StructTemplate) Generate(tableName string, tplColumns []*StructColumn) (string, error) {
 	tpl := template.Must(template.New("sql2struct").Funcs(template.FuncMap{
 		"ToCamelCase": UnderscoreToUpperCamelCase,
 	}).Parse(t.structTpl))
+
+	var buf bytes.Buffer
 
 	tplDB := StructTemplateDB{
 		TableName: tableName,
 		Columns:   tplColumns,
 	}
-	err := tpl.Execute(os.Stdout, tplDB)
+	err := tpl.Execute(&buf, tplDB)
+	result := buf.String()
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return result, nil
 }
 
 // 单词全部转为大写/小写
@@ -234,8 +239,44 @@ func sql2go() {
 	template := NewStructTemplate()
 
 	templateColumns := template.AssemblyColumns(columns)
-	err = template.Generate(tableName, templateColumns)
+	str, err := template.Generate(tableName, templateColumns)
 	if err != nil {
 		log.Fatalf("template.Generate err: %v", err)
+	}
+	sn := SqlNew(str, outFile)
+	sn.write2file()
+}
+
+type xsql struct {
+	Msg string
+	// 输出文件，默认json2go_types.go
+	OutFile string
+}
+
+// New returns a new xsql
+func SqlNew(msg, outFile string) *xsql {
+	return &xsql{
+		Msg:     msg,
+		OutFile: outFile,
+	}
+}
+
+func (xl *xsql) write2file() {
+	if outType == OutTypeForFile {
+		if len(xl.OutFile) == 0 {
+			xl.OutFile = DefaultOutFile
+		}
+		file, err := os.OpenFile(xl.OutFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+		if err != nil {
+			log.Fatalf("os OpenFile err: %v", err)
+			return
+		}
+		file.WriteString(goBegin)
+		file.WriteString(xl.Msg + "\n")
+		ozlog.Infof("生成文件 %s", outFile)
+	} else if outType == OutTypeForPrint {
+		if _, err := os.Stdout.WriteString(xl.Msg); err != nil {
+			log.Fatalf("write stdout err: %v", err)
+		}
 	}
 }

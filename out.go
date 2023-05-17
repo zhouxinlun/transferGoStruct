@@ -32,7 +32,7 @@ func (xj *xjson) writefileStruct() {
 	file, err := os.OpenFile(xj.OutFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	file.WriteString(goBegin)
 	if err != nil {
-		ozlog.Errorf("new file error...")
+		ozlog.Errorf("json new file error...")
 	}
 	for _, value := range xj.Sub {
 		for i := 0; i < len(value); i++ {

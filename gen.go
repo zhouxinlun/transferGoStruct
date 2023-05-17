@@ -25,7 +25,7 @@ func readJsonAndGen(jsonFile, outType, outFile string) {
 			break
 		}
 		json = `` + string(buf[:len]) + ``
-		ck := New(json, jsonFile, outType, outFile)
+		ck := JsonNew(json, jsonFile, outType, outFile)
 		ck.json2Struct()
 	}
 	return

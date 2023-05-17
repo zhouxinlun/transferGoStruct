@@ -1,30 +1,5 @@
 package main
 
-const (
-	// OutTypeForPrint
-	OutTypeForPrint = "print"
-	// OutTypeForFile
-	OutTypeForFile = "file"
-)
-
-const (
-	// DefaultJsonFile 默认json文件
-	DefaultJsonFile = "transferGoStruct.json"
-	// DefaultOutType 默认输出方式
-	DefaultOutType = "print"
-	// DefaultOutFile 默认输出文件
-	DefaultOutFile = "gen_json2go_types.go"
-	// DefaultStructName 结构体名称
-	DefaultStructName = "Json2GoAutoGenerate"
-)
-
-const (
-	Xmap    = "map[string]interface {}"
-	Xlist   = "[]interface {}"
-	Xstring = "string"
-	goBegin = "package transferGoStruct\n\n"
-)
-
 var (
 	Xstr     = "%s"
 	Xbegin   = "\ntype %s struct {"
@@ -52,8 +27,8 @@ type xjson struct {
 	OutFile string
 }
 
-// New returns a new xjson
-func New(msg, jsonFile, outType, outFile string) *xjson {
+// JsonNew returns a new xjson
+func JsonNew(msg, jsonFile, outType, outFile string) *xjson {
 	return &xjson{
 		Name:     DefaultStructName,
 		Msg:      msg,
