@@ -174,7 +174,16 @@ func json2goStruct(name, detail string) {
 // sql2goStruct
 func sql2goStruct(name, detail string) {
 	ozlog.Infof("开始连接db...")
-	sql2go()
+	dbInfo := &DBInfo{
+		DBType:    dbType,
+		Host:      host,
+		UserName:  username,
+		Password:  password,
+		Charset:   charset,
+		DbName:    dbName,
+		TableName: tableName,
+	}
+	sql2go(dbInfo)
 	ozlog.Infof("生成结构完成...")
 }
 
@@ -215,6 +224,20 @@ func getWorkDir() {
 		workPath = currentDir
 	}
 }
+
+// 测试本地数据库时打开
+//func main() {
+//	dbInfo := &DBInfo{
+//		DBType:    "mysql",
+//		Host:      "127.0.0.1:3306",
+//		UserName:  "root",
+//		Password:  "Zhouxl950319!",
+//		Charset:   "utf8mb4",
+//		DbName:    "herman",
+//		TableName: "admin",
+//	}
+//	sql2go(dbInfo)
+//}
 
 func main() {
 	// 获取当前目录

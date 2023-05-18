@@ -20,11 +20,13 @@ type DBModel struct {
 }
 
 type DBInfo struct {
-	DBType   string
-	Host     string
-	UserName string
-	Password string
-	Charset  string
+	DBType    string
+	Host      string
+	UserName  string
+	Password  string
+	Charset   string
+	DbName    string
+	TableName string
 }
 
 type TableColumn struct {
@@ -154,9 +156,21 @@ func NewStructTemplate() *StructTemplate {
 }
 
 func (t *StructTemplate) AssemblyColumns(tbColumns []*TableColumn) []*StructColumn {
+
+	//fmt.Println("------------------templateColumns start-----------------")
+	//for _, v := range tbColumns {
+	//	fmt.Printf("ColumnName: %s, ColumnType: %s, ColumnKey: %s, ColumnComment: %s, DataType: %s, IsNullable: %s \n", v.ColumnName, v.ColumnType, v.ColumnKey, v.ColumnComment, v.DataType, v.IsNullable)
+	//}
+	//fmt.Println("------------------templateColumns end-----------------")
+
 	tplColumns := make([]*StructColumn, 0, len(tbColumns))
 	for _, column := range tbColumns {
-		tag := fmt.Sprintf("`"+"json:"+"\"%s\""+"`", column.ColumnName)
+		var tag string
+		if len(column.ColumnKey) > 0 && column.ColumnKey == "PRI" {
+			tag = fmt.Sprintf("`"+"json:"+"\"%s\" "+"gorm:"+"\"column:%s;primary_key;comment:%s;\""+"`", column.ColumnName, column.ColumnName, column.ColumnComment)
+		} else {
+			tag = fmt.Sprintf("`"+"json:"+"\"%s\" "+"gorm:"+"\"column:%s;comment:%s;\""+"`", column.ColumnName, column.ColumnName, column.ColumnComment)
+		}
 		tplColumns = append(tplColumns, &StructColumn{
 			Name:    column.ColumnName,
 			Type:    DBTypeToStructType[column.DataType],
@@ -225,14 +239,7 @@ func CamelCaseToUnderscore(s string) string {
 	return string(output)
 }
 
-func sql2go() {
-	dbInfo := &DBInfo{
-		DBType:   dbType,
-		Host:     host,
-		UserName: username,
-		Password: password,
-		Charset:  charset,
-	}
+func sql2go(dbInfo *DBInfo) {
 
 	dbModel := NewDBModel(dbInfo)
 
@@ -241,7 +248,7 @@ func sql2go() {
 		log.Fatalf("dbModel.Connect err: %v", err)
 	}
 
-	columns, err := dbModel.GetColumns(dbName, tableName)
+	columns, err := dbModel.GetColumns(dbInfo.DbName, dbInfo.TableName)
 	if err != nil {
 		log.Fatalf("dbModel.GetColumns err: %v", err)
 	}
