@@ -114,7 +114,7 @@ func (m *DBModel) GetColumns(dbName, tableName string) ([]*TableColumn, error) {
 	return columns, nil
 }
 
-const structTpl = `type {{.TableName | ToCamelCase}} struct {
+const printStructTpl = `type {{.TableName | ToCamelCase}} struct {
 {{range .Columns}}	{{ $length := len .Comment}} {{ if gt $length 0 }}// {{.Comment}} {{else}}// {{.Name}} {{ end }}
 	{{ $typeLen := len .Type }} {{ if gt $typeLen 0 }}{{.Name | ToCamelCase}}	{{.Type}}	{{.Tag}}{{ else }}{{.Name}}{{ end }}
 {{end}}}
@@ -122,6 +122,11 @@ const structTpl = `type {{.TableName | ToCamelCase}} struct {
 func (model {{.TableName | ToCamelCase}}) TableName() string {
 	return "{{.TableName}}"
 }`
+
+const fileStructTpl = `type {{.TableName | ToCamelCase}} struct {
+{{range .Columns}}	{{ $length := len .Comment}} {{ if gt $length 0 }}// {{.Comment}} {{else}}// {{.Name}} {{ end }}
+	{{ $typeLen := len .Type }} {{ if gt $typeLen 0 }}{{.Name | ToCamelCase}}	{{.Type}}	{{.Tag}}{{ else }}{{.Name}}{{ end }}
+{{end}}}`
 
 type StructTemplate struct {
 	structTpl string
@@ -140,7 +145,12 @@ type StructTemplateDB struct {
 }
 
 func NewStructTemplate() *StructTemplate {
-	return &StructTemplate{structTpl: structTpl}
+	if outType == OutTypeForPrint {
+		return &StructTemplate{structTpl: printStructTpl}
+	} else if outType == OutTypeForFile {
+		return &StructTemplate{structTpl: fileStructTpl}
+	}
+	return nil
 }
 
 func (t *StructTemplate) AssemblyColumns(tbColumns []*TableColumn) []*StructColumn {
