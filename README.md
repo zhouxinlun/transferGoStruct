@@ -29,12 +29,12 @@ json/sql转换golang struct工具
     -table_name      sql2go: 表名, 默认'' 
     
     Examples: 
-    transferGoStruct json2goStruct 
-    transferGoStruct json2goStruct -out_type=print 
-    transferGoStruct json2goStruct -out_type=file 
-    transferGoStruct json2goStruct -out_type=file -out_file=out_types.go 
-    transferGoStruct sql2goStruct -out_type=print -user_name=root -password=root -db_name=test -table_name=test 
-    transferGoStruct sql2goStruct -out_type=file -out_file=out_types.go -user_name=root -password=root -db_name=test -table_name=test 
+    transferGoStruct json2go 
+    transferGoStruct json2go -out_type=print 
+    transferGoStruct json2go -out_type=file 
+    transferGoStruct json2go -out_type=file -out_file=out_types.go 
+    transferGoStruct sql2go -out_type=print -user_name=root -password=root -db_name=test -table_name=test 
+    transferGoStruct sql2go -out_type=file -out_file=out_types.go -user_name=root -password=root -db_name=test -table_name=test 
 ### 三、代码说明：
     该代码是我在github转换示例中扩展出来的，主要功能目前只实现了json -> struct，sql -> struct，
     思路是利用终端命令行参数初始化设定，并进行不同类型切换不同方式转换struct，
