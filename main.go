@@ -124,12 +124,12 @@ func getHelp(name, detail string) {
 		"-db_name\t sql2go: 数据库名称, 默认''",
 		"-table_name\t sql2go: 表名, 默认''",
 	}, []string{
-		"transferGoStruct json2goStruct",
-		"transferGoStruct json2goStruct -out_type=print",
-		"transferGoStruct json2goStruct -out_type=file",
-		"transferGoStruct json2goStruct -out_type=file -out_file=out_types.go",
-		"transferGoStruct sql2goStruct -out_type=print -user_name=root -password=root -db_name=test -table_name=test",
-		"transferGoStruct sql2goStruct -out_type=file -out_file=out_types.go -user_name=root -password=root -db_name=test -table_name=test",
+		"transferGoStruct json2go",
+		"transferGoStruct json2go -out_type=print",
+		"transferGoStruct json2go -out_type=file",
+		"transferGoStruct json2go -out_type=file -out_file=out_types.go",
+		"transferGoStruct sql2go -out_type=print -user_name=root -password=root -db_name=test -table_name=test",
+		"transferGoStruct sql2go -out_type=file -out_file=out_types.go -user_name=root -password=root -db_name=test -table_name=test",
 	})
 }
 
